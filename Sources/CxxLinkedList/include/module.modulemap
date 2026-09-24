@@ -1,0 +1,13 @@
+//
+//  module.modulemap
+//  CxxLinkedList
+//
+//  Created by Edoardo Frezzotti on 25/06/26.
+//
+
+module CxxLinkedList {
+    header "LinkedList.hpp"
+    header "LinkedListTypes.hpp"
+    requires cplusplus
+    export *
+}

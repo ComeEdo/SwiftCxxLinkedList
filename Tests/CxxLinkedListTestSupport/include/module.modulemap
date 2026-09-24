@@ -1,0 +1,12 @@
+//
+//  module.modulemap
+//  CxxLinkedList
+//
+//  Created by Edoardo Frezzotti on 24/09/26.
+//
+
+module CxxLinkedListTestSupport {
+    header "LinkedListTestTypes.hpp"
+    requires cplusplus
+    export *
+}

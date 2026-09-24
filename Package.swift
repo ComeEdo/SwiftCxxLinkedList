@@ -5,28 +5,72 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftCxxLinkedList",
+    platforms: [
+        .macOS(.v13),
+        .iOS(.v16),
+        .watchOS(.v9),
+        .tvOS(.v16),
+        .visionOS(.v1)
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "SwiftCxxLinkedList",
-            targets: ["SwiftCxxLinkedList"]
-        ),
+            name: "LinkedList",
+            targets: ["LinkedList", "CxxLinkedList"]
+        )
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "SwiftCxxLinkedList",
+            name: "CxxLinkedList",
+            path: "Sources/CxxLinkedList",
+            publicHeadersPath: "include",
+            cxxSettings: [
+                .unsafeFlags(["-Wunsafe-buffer-usage"])
+            ]
+        ),
+        .target(
+            name: "LinkedList",
+            dependencies: ["CxxLinkedList"],
+            path: "Sources/LinkedList",
             swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency"),
+                .interoperabilityMode(.Cxx),
+                .enableExperimentalFeature("SafeInteropWrappers"),
+                .strictMemorySafety()
+            ]
+        ),
+        .target(
+            name: "CxxLinkedListTestSupport",
+            dependencies: ["CxxLinkedList"],
+            path: "Tests/CxxLinkedListTestSupport",
+            publicHeadersPath: "include",
+            cxxSettings: [
+                .unsafeFlags(["-Wunsafe-buffer-usage"])
+            ]
+        ),
+        .executableTarget(
+            name: "CxxLinkedListTests",
+            dependencies: [
+                "CxxLinkedList",
+                "CxxLinkedListTestSupport"
             ],
+            path: "Tests/CxxLinkedListTests",
+            cxxSettings: [
+                .unsafeFlags(["-Wunsafe-buffer-usage"])
+            ]
         ),
         .testTarget(
-            name: "SwiftCxxLinkedListTests",
-            dependencies: ["SwiftCxxLinkedList"],
-            swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency"),
+            name: "LinkedListTests",
+            dependencies: [
+                "LinkedList",
+                "CxxLinkedList",
+                "CxxLinkedListTestSupport"
             ],
-        ),
-    ]
+            path: "Tests/SwiftCxxLinkedListTests",
+            swiftSettings: [
+                .interoperabilityMode(.Cxx),
+                .enableExperimentalFeature("SafeInteropWrappers"),
+                .strictMemorySafety()
+            ]
+        )
+    ],
+    cxxLanguageStandard: .cxx20
 )
