@@ -6,7 +6,6 @@
 //
 
 import Testing
-@testable import LinkedList
 import CxxLinkedList
 import CxxLinkedListTestSupport
 import Foundation
